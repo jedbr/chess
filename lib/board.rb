@@ -19,4 +19,8 @@ class Board
   def setup
 
   end
+
+  def print
+
+  end
 end
