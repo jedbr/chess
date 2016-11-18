@@ -1,14 +1,10 @@
-require_relative 'pieces/pawn'
-require_relative 'pieces/king'
-require_relative 'pieces/queen'
-
 class Piece
-  attr_accessor :position, :symbol, :captured
+  attr_accessor :symbol, :captured
 
   def initialize(color, position)
     @color = color
     @column = position[0]
-    @row = position[1]
+    @row = position[1].to_i
     @captured = false
   end
 
@@ -34,7 +30,7 @@ class Piece
       return nil
     end
 
-    new_row = @row.to_i + row
+    new_row = @row + row
     if new_row.between?(1, 8)
       new_position += new_row.to_s
     else

@@ -1,10 +1,8 @@
-require_relative 'pieces'
-
 class Board
   attr_accessor :column
 
   def initialize
-    @column = Hash.new { |h, k| h[k] = Array.new(8) }
+    @column = Hash.new { |h, k| h[k] = Array.new(9) }
     ("a".."h").each do |i|
       @column[i.to_sym]
     end
