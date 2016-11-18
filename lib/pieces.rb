@@ -1,11 +1,22 @@
 require_relative 'pieces/pawn'
+require_relative 'pieces/king'
+require_relative 'pieces/queen'
 
 class Piece
   attr_accessor :position, :symbol, :captured
 
+  def initialize(color, position)
+    @color = color
+    @column = position[0]
+    @row = position[1]
+    @captured = false
+  end
+
   def self.create(color, type, position)
     case type
     when :pawn then Pieces::Pawn.new(color, position)
+    when :king then Pieces::King.new(color, position)
+    when :queen then Pieces::Queen.new(color, position)
     end
   end
 
@@ -14,33 +25,30 @@ class Piece
   end
 
   def mv(column, row)
-    pos = @position.to_s
-    if (pos[0].ord + column).between?(97, 104)
-      pos[0] = (pos[0].ord + column).chr
+    new_position = ""
+
+    new_column = @column.ord + column
+    if new_column.between?(97, 104)
+      new_position += new_column.chr
     else
       return nil
     end
 
-    if (pos[1].to_i + row).between?(1, 8)
-      pos[1] = (pos[1].to_i + row).to_s
+    new_row = @row.to_i + row
+    if new_row.between?(1, 8)
+      new_position += new_row.to_s
     else
       return nil
     end
 
-    pos.to_sym
+    collision?(new_position) ? nil : new_position
+  end
+
+  def collision?(pos)
+    false
   end
 
   def checking?
     raise NotImplementedError
-  end
-
-  def capture(target)
-    @position = target.position
-    target.destroy
-  end
-
-  def destroy
-    @captured = true
-    @position = nil
   end
 end
