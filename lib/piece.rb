@@ -1,10 +1,11 @@
 class Piece
-  attr_accessor :symbol
+  attr_accessor :symbol, :captured
 
   def initialize(color, position)
     @color = color
     @column = position[0]
     @row = position[1].to_i
+    @captured = false
   end
 
   def self.create(color, type, position)
@@ -12,6 +13,9 @@ class Piece
     when :pawn then Pieces::Pawn.new(color, position)
     when :king then Pieces::King.new(color, position)
     when :queen then Pieces::Queen.new(color, position)
+    when :rook then Pieces::Rook.new(color, position)
+    when :bishop then Pieces::Bishop.new(color, position)
+    when :knight then Pieces::Knight.new(color, position)
     end
   end
 
