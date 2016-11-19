@@ -1,7 +1,7 @@
 module Pieces
   class King < Piece
-    def initialize(color, position)
-      super(color, position)
+    def initialize(color, position, board)
+      super(color, position, board)
       @symbol = color == :white ? "♔" : "♚"
     end
 
@@ -16,11 +16,10 @@ module Pieces
                  mv(-1, 0),
                  mv(-1, 1))
 
-      moves.select { |m| m }
+      moves.compact
     end
 
-    def collision?(pos)
-      # TODO
+    def calculate_collision(moves)
       false
     end
   end

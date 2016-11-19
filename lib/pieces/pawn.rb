@@ -1,7 +1,7 @@
 module Pieces
   class Pawn < Piece
-    def initialize(color, position)
-      super(color, position)
+    def initialize(color, position, board)
+      super(color, position, board)
       @symbol = color == :white ? "♙" : "♟"
       @moved = false
     end
@@ -13,12 +13,12 @@ module Pieces
                  mv(-1, 1),
                  mv(1, 1))
 
-      moves.select! { |m| m }
+      moves.compact
       moves << mv(0, 2) if @moved == false
       moves
     end
 
-    def collision?(pos)
+    def calculate_collision(moves)
       false
     end
   end

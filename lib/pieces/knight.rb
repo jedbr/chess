@@ -1,7 +1,7 @@
 module Pieces
   class Knight < Piece
-    def initialize(color, position)
-      super(color, position)
+    def initialize(color, position, board)
+      super(color, position, board)
       @symbol = color == :white ? "♘" : "♞"
     end
 
@@ -16,10 +16,10 @@ module Pieces
                  mv(-1, -2),
                  mv(-2, -1))
       
-      moves.select { |m| m }
+      moves.compact
     end
 
-    def collision?(pos)
+    def calculate_collision(moves)
       false
     end
   end

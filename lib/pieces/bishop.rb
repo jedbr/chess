@@ -1,18 +1,15 @@
 module Pieces
   class Bishop < Piece
-    def initialize(color, position)
-      super(color, position)
+    def initialize(color, position, board)
+      super(color, position, board)
       @symbol = color == :white ? "♗" : "♝"
     end
 
     def moves
       moves = []
 
-      moves << slash_moves
-      moves << backslash_moves
-
-      moves.flatten!
-      moves.select { |m| m }
+      moves.concat(slash_moves)
+      moves.concat(backslash_moves)
     end
   end
 end
