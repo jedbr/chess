@@ -13,13 +13,33 @@ module Pieces
                  mv(-1, 1),
                  mv(1, 1))
 
-      moves.compact
-      moves << mv(0, 2) if @moved == false
-      moves
+      moves = moves.compact
+      calculate_collision(moves)
     end
 
     def calculate_collision(moves)
-      false
+      available_moves = []
+
+      moves.each_with_index do |m, i|
+        space = @board.position[m[0]][m[1].to_i]
+
+        if i == 0
+          if space.nil?
+            available_moves << m
+
+            if @moved == false
+              first_move = mv(0, 2)
+              space2 = @board.position[first_move[0]][first_move[1].to_i]
+              available_moves << first_move if space2.nil?
+            end
+          end
+        else
+          available_moves << m unless space.nil? ||
+                                      space.color == @color
+        end
+      end
+
+      available_moves
     end
   end
 end
