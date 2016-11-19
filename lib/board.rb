@@ -18,10 +18,10 @@ class Board
     system("clear")
     puts "  ┌────┬────┬────┬────┬────┬────┬────┬────┐"
 
-    (1..8).each do |i|
+    (1..8).reverse_each do |i|
       to_print = row(i).map{ |s| s.nil? ? ("  ") : "#{s.symbol} "}.join(" │ ")
-      puts "#{9 - i} │ #{to_print} │"
-      puts "  ├────┼────┼────┼────┼────┼────┼────┼────┤" unless i == 8
+      puts "#{i} │ #{to_print} │"
+      puts "  ├────┼────┼────┼────┼────┼────┼────┼────┤" unless i == 1
     end
 
     puts "  └────┴────┴────┴────┴────┴────┴────┴────┘"
@@ -45,6 +45,27 @@ class Board
   end
 
   def setup_figures
+    whites = [Piece.create(:white, :rook, "a1"),
+              Piece.create(:white, :knight, "b1"),
+              Piece.create(:white, :bishop, "c1"),
+              Piece.create(:white, :queen, "d1"),
+              Piece.create(:white, :king, "e1"),
+              Piece.create(:white, :bishop, "f1"),
+              Piece.create(:white, :knight, "g1"),
+              Piece.create(:white, :rook, "h1")]
+    
+    blacks = [Piece.create(:black, :rook, "a8"),
+              Piece.create(:black, :knight, "b8"),
+              Piece.create(:black, :bishop, "c8"),
+              Piece.create(:black, :king, "d8"),
+              Piece.create(:black, :queen, "e8"),
+              Piece.create(:black, :bishop, "f8"),
+              Piece.create(:black, :knight, "g8"),
+              Piece.create(:black, :rook, "h8")]
 
+    @position.each_key do |k|
+      @position[k][1] = whites.shift
+      @position[k][8] = blacks.shift
+    end
   end
 end
