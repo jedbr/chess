@@ -9,9 +9,15 @@ module Pieces
     def moves
       moves = []
 
-      moves.push(mv(0, 1),
-                 mv(-1, 1),
-                 mv(1, 1))
+      if @color == :white
+        moves.push(mv(0, 1),
+                   mv(-1, 1),
+                   mv(1, 1))
+      else
+        moves.push(mv(0, -1),
+                   mv(-1, -1),
+                   mv(1, -1))
+      end
 
       moves = moves.compact
       calculate_collision(moves)
@@ -28,7 +34,7 @@ module Pieces
             available_moves << m
 
             if @moved == false
-              first_move = mv(0, 2)
+              first_move = @color == :white ? mv(0, 2) : mv(0, -2)
               space2 = @board.position[first_move[0]][first_move[1].to_i]
               available_moves << first_move if space2.nil?
             end
