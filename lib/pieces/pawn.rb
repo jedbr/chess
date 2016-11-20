@@ -2,7 +2,7 @@ module Pieces
   class Pawn < Piece
     def initialize(color, position, board)
       super(color, position, board)
-      @symbol = color == :white ? "♙" : "♟"
+      @symbol = color == :white ? "♟" : "♙"
       @moved = false
     end
 
