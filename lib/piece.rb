@@ -138,7 +138,7 @@ class Piece
     available_moves = []
 
     moves.each do |m|
-      space = @board.position[m[0]][m[1].to_i]
+      space = space(m)
 
       if space.nil?
         available_moves << m
@@ -151,11 +151,20 @@ class Piece
     available_moves
   end
 
+  def move(destination)
+    space = space(destination)
+
+  end
+
   def checking?
     raise NotImplementedError
   end
 
-  def get_type
+  def type
     self.class.to_s.split("::").last
+  end
+
+  def space(coords)
+    @board.position[coords[0]][coords[1].to_i]
   end
 end

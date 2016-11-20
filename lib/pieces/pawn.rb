@@ -27,7 +27,7 @@ module Pieces
       available_moves = []
 
       moves.each_with_index do |m, i|
-        space = @board.position[m[0]][m[1].to_i]
+        space = space(m)
 
         if i == 0
           if space.nil?
@@ -35,7 +35,7 @@ module Pieces
 
             if @moved == false
               first_move = @color == :white ? mv(0, 2) : mv(0, -2)
-              space2 = @board.position[first_move[0]][first_move[1].to_i]
+              space2 = space(first_move)
               available_moves << first_move if space2.nil?
             end
           end

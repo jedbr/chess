@@ -18,14 +18,13 @@ module Pieces
 
       moves = moves.compact
       moves = calculate_collision(moves)
-      remove_self_check(moves)
     end
 
     def calculate_collision(moves)
       available_moves = []
 
       moves.each do |m|
-        space = @board.position[m[0]][m[1].to_i]
+        space = space(m)
 
         if space.nil?
           available_moves << m
@@ -35,10 +34,6 @@ module Pieces
       end
 
       available_moves
-    end
-
-    def remove_self_check(moves)
-      moves
     end
   end
 end

@@ -24,7 +24,7 @@ module Pieces
       available_moves = []
 
       moves.each do |m|
-        space = @board.position[m[0]][m[1].to_i]
+        space = space(m)
 
         if space.nil?
           available_moves << m
