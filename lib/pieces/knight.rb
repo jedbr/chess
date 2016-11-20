@@ -29,8 +29,7 @@ module Pieces
         if space.nil?
           available_moves << m
         else
-          available_moves << m unless space.color == @color ||
-                                      space.get_type == "King"
+          available_moves << m unless space.color == @color
         end
       end
 

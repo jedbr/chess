@@ -143,8 +143,7 @@ class Piece
       if space.nil?
         available_moves << m
       else
-        available_moves << m unless space.color == @color ||
-                                    space.get_type == "King"
+        available_moves << m unless space.color == @color
         break
       end
     end
