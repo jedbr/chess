@@ -8,9 +8,13 @@ require_relative 'pieces/bishop'
 require_relative 'pieces/knight'
 require_relative 'exceptions'
 
+Player = Struct.new(:color, :pieces, :opponent)
+
 class Chess
   def initialize
-    @board = Board.new
+    @players = {white: Player.new(:white, []),
+                black: Player.new(:black, [])}
+    @board = Board.new(@players)
   end
 
   def play
