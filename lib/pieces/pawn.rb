@@ -35,17 +35,48 @@ module Pieces
 
             if @moved == false
               first_move = @color == :white ? mv(0, 2) : mv(0, -2)
-              space2 = space(first_move)
-              available_moves << first_move if space2.nil?
+              available_moves << first_move if space(first_move).nil?
             end
           end
+        elsif @board.en_passant && m == @board.en_passant_destination
+          available_moves << m
         else
           available_moves << m unless space.nil? ||
-                                      space.color == @color
+                                      space.color == @color 
         end
       end
 
       available_moves
+    end
+
+    def move(destination)
+      unless moves.include?(destination)
+        raise InvalidMoveError, "Invalid move." 
+      end
+
+      if @moved == false
+        if destination == mv(0, 2)
+          @board.en_passant = true
+          @board.en_passant_destination = mv(0, 1)
+        elsif destination == mv(0, -2)
+          @board.en_passant = true
+          @board.en_passant_destination = mv(0, -1)
+        else
+          @board.en_passant = false
+        end
+        @moved = true
+        update_position(destination)
+
+      elsif @board.en_passant == true &&
+            destination == @board.en_passant_destination
+
+        update_position(destination)
+        @color == :white ? space(mv(0, -1)).destroy : space(mv(0, 1)).destroy
+        @board.en_passant = false
+      else
+        @board.en_passant = false
+        update_position(destination)
+      end
     end
   end
 end
