@@ -30,7 +30,7 @@ class Board
     end
 
     puts "  └────┴────┴────┴────┴────┴────┴────┴────┘"
-    puts "    A    B    C    D    E    F    G    H  "
+    puts "    A    B    C    D    E    F    G    H  \n"
   end
 
   def setup
