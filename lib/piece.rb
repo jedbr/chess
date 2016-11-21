@@ -1,6 +1,25 @@
 class Piece
   attr_accessor :symbol, :color, :position
 
+  def self.create(color, type, position, board, owner)
+    piece = 
+      case type
+      when :pawn then Pieces::Pawn.new(color, position, board, owner)
+      when :king then Pieces::King.new(color, position, board, owner)
+      when :queen then Pieces::Queen.new(color, position, board, owner)
+      when :rook then Pieces::Rook.new(color, position, board, owner)
+      when :bishop then Pieces::Bishop.new(color, position, board, owner)
+      when :knight then Pieces::Knight.new(color, position, board, owner)
+      end
+
+    self.assign(piece, owner)
+  end
+
+  def self.assign(piece, owner)
+    owner.pieces << piece
+    piece
+  end
+
   def initialize(color, position, board,  owner)
     @color = color
     @position = position
@@ -8,17 +27,6 @@ class Piece
     @row = position[1].to_i
     @board = board
     @owner = owner
-  end
-
-  def self.create(color, type, position, board, owner)
-    case type
-    when :pawn then Pieces::Pawn.new(color, position, board, owner)
-    when :king then Pieces::King.new(color, position, board, owner)
-    when :queen then Pieces::Queen.new(color, position, board, owner)
-    when :rook then Pieces::Rook.new(color, position, board, owner)
-    when :bishop then Pieces::Bishop.new(color, position, board, owner)
-    when :knight then Pieces::Knight.new(color, position, board, owner)
-    end
   end
 
   def horizontal_moves

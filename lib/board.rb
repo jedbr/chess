@@ -44,11 +44,9 @@ class Board
     @position.each do |column, row|
       position = column + "2"
       row[2] = Piece.create(:white, :pawn, position, self, @players[:white])
-      @players[:white].pieces << row[2]
       
       position = column + "7"
       row[7] = Piece.create(:black, :pawn, position, self, @players[:black])
-      @players[:black].pieces << row[7]
     end
   end
 
@@ -70,9 +68,6 @@ class Board
               Piece.create(:black, :bishop, "f8", self, @players[:black]),
               Piece.create(:black, :knight, "g8", self, @players[:black]),
               Piece.create(:black, :rook, "h8", self, @players[:black])]
-
-    whites.each { |p| @players[:white].pieces << p }
-    blacks.each { |p| @players[:black].pieces << p }
 
     @position.each_key do |k|
       @position[k][1] = whites.shift
