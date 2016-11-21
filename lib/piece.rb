@@ -1,22 +1,23 @@
 class Piece
-  attr_accessor :symbol, :color, :captured
+  attr_accessor :symbol, :color, :position
 
-  def initialize(color, position, board)
+  def initialize(color, position, board,  owner)
     @color = color
+    @position = position
     @column = position[0]
     @row = position[1].to_i
-    @captured = false
     @board = board
+    @owner = owner
   end
 
-  def self.create(color, type, position, board)
+  def self.create(color, type, position, board, owner)
     case type
-    when :pawn then Pieces::Pawn.new(color, position, board)
-    when :king then Pieces::King.new(color, position, board)
-    when :queen then Pieces::Queen.new(color, position, board)
-    when :rook then Pieces::Rook.new(color, position, board)
-    when :bishop then Pieces::Bishop.new(color, position, board)
-    when :knight then Pieces::Knight.new(color, position, board)
+    when :pawn then Pieces::Pawn.new(color, position, board, owner)
+    when :king then Pieces::King.new(color, position, board, owner)
+    when :queen then Pieces::Queen.new(color, position, board, owner)
+    when :rook then Pieces::Rook.new(color, position, board, owner)
+    when :bishop then Pieces::Bishop.new(color, position, board, owner)
+    when :knight then Pieces::Knight.new(color, position, board, owner)
     end
   end
 
@@ -152,12 +153,18 @@ class Piece
   end
 
   def move(destination)
-    space = space(destination)
+    raise InvalidMoveError, "Invalid move." unless moves.include?(destination)
 
+    @board.en_passant = false
+
+    space(destination).destroy unless space(destination).nil?
+    @board.position[destination[0]][destination[1].to_i] = self
+    @board.position[@column][@row] = nil
+    update_position(destination)
   end
 
   def checking?
-    raise NotImplementedError
+    # TODO
   end
 
   def type
@@ -166,5 +173,15 @@ class Piece
 
   def space(coords)
     @board.position[coords[0]][coords[1].to_i]
+  end
+
+  def update_position(new_position)
+    @position = new_position
+    @column = @position[0]
+    @row = @position[1].to_i
+  end
+
+  def destroy
+    # TODO
   end
 end
