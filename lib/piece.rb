@@ -182,6 +182,6 @@ class Piece
   end
 
   def destroy
-    # TODO
+    @owner.pieces.delete(self)
   end
 end
