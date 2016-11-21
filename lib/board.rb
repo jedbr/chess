@@ -1,5 +1,5 @@
 class Board
-  attr_accessor :position
+  attr_accessor :position, :en_passant, :en_passant_destination
 
   def initialize(players)
     @position = Hash.new { |h, k| h[k] = Array.new(9) }
@@ -7,6 +7,9 @@ class Board
       @position[i]
 
     @players = players
+
+    @en_passant = false
+    @en_passant_destination = ""
     end
   end
 
