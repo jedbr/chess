@@ -1,7 +1,7 @@
 module Pieces
   class Queen < Piece
-    def initialize(color, position, board)
-      super(color, position, board)
+    def initialize(color, position, board, owner)
+      super(color, position, board, owner)
       @symbol = color == :white ? "♛" : "♕"
     end
 

@@ -11,9 +11,14 @@ require_relative 'exceptions'
 Player = Struct.new(:color, :pieces, :opponent)
 
 class Chess
+  attr_reader :players, :board # TEMPORARY ACCESS
+
   def initialize
     @players = {white: Player.new(:white, []),
                 black: Player.new(:black, [])}
+
+    @players[:white].opponent = @players[:black]
+    @players[:black].opponent = @players[:white]
     @board = Board.new(@players)
   end
 
