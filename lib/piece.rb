@@ -156,10 +156,6 @@ class Piece
     raise InvalidMoveError, "Invalid move." unless moves.include?(destination)
 
     @board.en_passant = false
-
-    space(destination).destroy unless space(destination).nil?
-    @board.position[destination[0]][destination[1].to_i] = self
-    @board.position[@column][@row] = nil
     update_position(destination)
   end
 
@@ -175,13 +171,19 @@ class Piece
     @board.position[coords[0]][coords[1].to_i]
   end
 
-  def update_position(new_position)
-    @position = new_position
+  def update_position(destination)
+    space(destination).destroy unless space(destination).nil?
+    @board.position[@column][@row] = nil
+
+    @position = destination
     @column = @position[0]
     @row = @position[1].to_i
+
+    @board.position[@column][@row] = self
   end
 
   def destroy
+    @board.position[@column][@row] = nil
     @owner.pieces.delete(self)
   end
 end
