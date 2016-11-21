@@ -168,7 +168,10 @@ class Piece
   end
 
   def checking?
-    # TODO
+    moves.any? do |m| 
+      s = space(m)
+      true if s && s.type == "King" && s.color != @color
+    end
   end
 
   def type
