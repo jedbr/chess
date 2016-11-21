@@ -77,6 +77,29 @@ module Pieces
         @board.en_passant = false
         update_position(destination)
       end
+
+      if @color == :white
+        promote if @row == 8
+      else
+        promote if @row == 1
+      end
+    end
+
+    def promote
+      @board.print
+      puts "Choose promotion (type: queen, rook, bishop or knight): "
+      while type = gets.chomp.to_sym
+        case type
+        when :queen, :rook, :bishop, :knight
+          self.destroy
+          @board.position[@column][@row] = 
+            Piece.create(@color, type, @position, @board, @owner)
+          break
+        else
+          puts "Invalid input. Try again."
+          puts "Choose promotion (type: queen, rook, bishop or knight): "
+        end
+      end
     end
   end
 end
