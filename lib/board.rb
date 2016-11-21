@@ -1,10 +1,12 @@
 class Board
   attr_accessor :position
 
-  def initialize
+  def initialize(players)
     @position = Hash.new { |h, k| h[k] = Array.new(9) }
     ("a".."h").each do |i|
       @position[i]
+
+    @players = players
     end
   end
 
@@ -36,32 +38,38 @@ class Board
   private
 
   def setup_pawns
-    @position.each do |c, r|
-      position = c + "2"
-      r[2] = Piece.create(:white, :pawn, position, self)
-      position = c + "7"
-      r[7] = Piece.create(:black, :pawn, position, self)
+    @position.each do |column, row|
+      position = column + "2"
+      row[2] = Piece.create(:white, :pawn, position, self, @players[:white])
+      @players[:white].pieces << row[2]
+      
+      position = column + "7"
+      row[7] = Piece.create(:black, :pawn, position, self, @players[:black])
+      @players[:black].pieces << row[7]
     end
   end
 
   def setup_figures
-    whites = [Piece.create(:white, :rook, "a1", self),
-              Piece.create(:white, :knight, "b1", self),
-              Piece.create(:white, :bishop, "c1", self),
-              Piece.create(:white, :queen, "d1", self),
-              Piece.create(:white, :king, "e1", self),
-              Piece.create(:white, :bishop, "f1", self),
-              Piece.create(:white, :knight, "g1", self),
-              Piece.create(:white, :rook, "h1", self)]
+    whites = [Piece.create(:white, :rook, "a1", self, @players[:white]),
+              Piece.create(:white, :knight, "b1", self, @players[:white]),
+              Piece.create(:white, :bishop, "c1", self, @players[:white]),
+              Piece.create(:white, :queen, "d1", self, @players[:white]),
+              Piece.create(:white, :king, "e1", self, @players[:white]),
+              Piece.create(:white, :bishop, "f1", self, @players[:white]),
+              Piece.create(:white, :knight, "g1", self, @players[:white]),
+              Piece.create(:white, :rook, "h1", self, @players[:white])]
     
-    blacks = [Piece.create(:black, :rook, "a8", self),
-              Piece.create(:black, :knight, "b8", self),
-              Piece.create(:black, :bishop, "c8", self),
-              Piece.create(:black, :king, "d8", self),
-              Piece.create(:black, :queen, "e8", self),
-              Piece.create(:black, :bishop, "f8", self),
-              Piece.create(:black, :knight, "g8", self),
-              Piece.create(:black, :rook, "h8", self)]
+    blacks = [Piece.create(:black, :rook, "a8", self, @players[:black]),
+              Piece.create(:black, :knight, "b8", self, @players[:black]),
+              Piece.create(:black, :bishop, "c8", self, @players[:black]),
+              Piece.create(:black, :king, "d8", self, @players[:black]),
+              Piece.create(:black, :queen, "e8", self, @players[:black]),
+              Piece.create(:black, :bishop, "f8", self, @players[:black]),
+              Piece.create(:black, :knight, "g8", self, @players[:black]),
+              Piece.create(:black, :rook, "h8", self, @players[:black])]
+
+    whites.each { |p| @players[:white].pieces << p }
+    blacks.each { |p| @players[:black].pieces << p }
 
     @position.each_key do |k|
       @position[k][1] = whites.shift
