@@ -161,8 +161,6 @@ class Piece
   end
 
   def move(destination)
-    raise InvalidMoveError, "Invalid move." unless moves.include?(destination)
-
     @board.en_passant = false
     update_position(destination)
   end

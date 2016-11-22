@@ -20,7 +20,6 @@ class Board
   end
 
   def print
-    system("clear")
     puts "  ┌────┬────┬────┬────┬────┬────┬────┬────┐"
 
     (1..8).reverse_each do |i|
@@ -36,6 +35,10 @@ class Board
   def setup
     setup_pawns
     setup_figures
+  end
+
+  def space(coords)
+    @position[coords[0]][coords[1].to_i]
   end
 
   private

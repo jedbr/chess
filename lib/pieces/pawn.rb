@@ -52,9 +52,6 @@ module Pieces
     end
 
     def move(destination)
-      unless moves.include?(destination)
-        raise InvalidMoveError, "Invalid move." 
-      end
 
       if @moved == false
         if destination == mv(0, 2)
