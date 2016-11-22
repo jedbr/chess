@@ -6,7 +6,7 @@ module Pieces
       @moved = false
     end
 
-    def moves
+    def moves(self_checking = true)
       moves = []
 
       if @color == :white
@@ -20,7 +20,9 @@ module Pieces
       end
 
       moves.compact!
-      calculate_collision(moves)
+      moves = calculate_collision(moves)
+      moves = remove_self_checking(moves) if self_checking
+      moves
     end
 
     def calculate_collision(moves)
@@ -82,6 +84,15 @@ module Pieces
         promote if @row == 8
       else
         promote if @row == 1
+      end
+    end
+
+    def checking?
+      not_checking = [mv(0, 2), mv(0, 1), mv(0, -2), mv(0, -1)]
+      
+      (moves(false) - not_checking).any? do |m| 
+        s = space(m)
+        true if s && s.type == "King" && s.color != @color
       end
     end
 

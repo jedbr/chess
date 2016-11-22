@@ -5,7 +5,7 @@ module Pieces
       @symbol = color == :white ? "♚" : "♔"
     end
 
-    def moves
+    def moves(self_checking = true)
       moves = []
       moves.push(mv(0, 1),
                  mv(1, 1),
@@ -18,6 +18,8 @@ module Pieces
 
       moves.compact!
       moves = calculate_collision(moves)
+      moves = remove_self_checking(moves) if self_checking
+      moves
     end
 
     def calculate_collision(moves)

@@ -168,7 +168,7 @@ class Piece
   end
 
   def checking?
-    moves.any? do |m| 
+    moves(false).any? do |m| 
       s = space(m)
       true if s && s.type == "King" && s.color != @color
     end
@@ -196,5 +196,28 @@ class Piece
   def destroy
     @board.position[@column][@row] = nil
     @owner.pieces.delete(self)
+  end
+
+  def restore
+    @board.position[@column][@row] = self
+    @owner.pieces << self
+  end
+
+  def remove_self_checking(moves_to_filter)
+    safe_moves = []
+
+    moves_to_filter.each do |m|
+      backup = space(m)
+      space(m).destroy unless backup.nil?
+      @board.position[m[0]][m[1].to_i] = self
+      @board.position[@column][@row] = nil
+
+      safe_moves << m unless @owner.opponent.pieces.any? { |p| p.checking? }
+
+      backup.nil? ? @board.position[m[0]][m[1].to_i] = nil : backup.restore
+      @board.position[@column][@row] = self
+    end
+
+    safe_moves
   end
 end
