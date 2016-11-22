@@ -20,9 +20,18 @@ class Chess
     @players[:white].opponent = @players[:black]
     @players[:black].opponent = @players[:white]
     @board = Board.new(@players)
+    @current_player = @players[:white]
   end
 
   def play
     @board.setup
+  end
+
+  def stalemate?
+    @current_player.opponent.pieces.all? { |p| p.moves.empty? }
+  end
+
+  def checkmate?
+    stalemate? && @current_player.pieces.any? { |p| p.checking? }
   end
 end
