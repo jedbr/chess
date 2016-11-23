@@ -2,6 +2,9 @@ class Piece
   attr_accessor :symbol, :color, :position
 
   def self.create(color, type, position, board, owner)
+    column = position[0]
+    row = position[1].to_i
+
     piece = 
       case type
       when :pawn then Pieces::Pawn.new(color, position, board, owner)
@@ -12,12 +15,12 @@ class Piece
       when :knight then Pieces::Knight.new(color, position, board, owner)
       end
 
+    board.position[column][row] = piece
     self.assign(piece, owner)
   end
 
   def self.assign(piece, owner)
     owner.pieces << piece
-    piece
   end
 
   def initialize(color, position, board,  owner)
@@ -168,7 +171,7 @@ class Piece
   def checking?
     moves(false).any? do |m| 
       s = space(m)
-      true if s && s.type == "King" && s.color != @color
+      s && s.type == "King" && s.color != @color
     end
   end
 
