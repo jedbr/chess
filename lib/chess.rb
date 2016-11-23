@@ -1,3 +1,4 @@
+require 'pstore'
 require_relative 'board'
 require_relative 'piece'
 require_relative 'pieces/pawn'
@@ -10,9 +11,29 @@ require_relative 'pieces/knight'
 Player = Struct.new(:color, :pieces, :opponent)
 
 class Chess
-  attr_reader :players, :board # TEMPORARY ACCESS
+  def start_menu
+    loop do
+      system("clear")
+      puts "1. New game"
+      puts "2. Load game"
+      puts "3. Quit"
+      input = gets.chomp
+      case input
+      when "1"
+        new_game
+        play
+      when "2"
+        continue_game if load_game?
+      when "3"
+        exit
+      else
+        puts "Unknown command. Type 1, 2 or 3"
+        gets
+      end
+    end
+  end
 
-  def initialize
+  def new_game
     @players = {white: Player.new(:white, []),
                 black: Player.new(:black, [])}
 
@@ -21,6 +42,25 @@ class Chess
     @board = Board.new(@players)
     @current_player = @players[:black]
     @check = false
+  end
+
+  def game_menu
+    loop do
+      puts "1. Back to game"
+      puts "2. Save game"
+      puts "3. Quit game"
+      input = gets.chomp
+      case input
+      when "1"
+        break
+      when "2"
+        save_game
+      when "3"
+        exit
+      else
+        puts "Unknown command. Type 1, 2 or 3"
+      end
+    end
   end
 
   def play
@@ -35,6 +75,62 @@ class Chess
     end
     
     finish_game
+  end
+
+  def continue_game
+    switch_players
+    system("clear")
+    @board.print
+
+    until stalemate?
+      switch_players
+      make_move
+      @board.print     
+    end
+    
+    finish_game
+  end
+
+  def save_game
+    Dir.mkdir('saves') unless File.exist?('saves')
+    print "Filename: "
+    filename = "./saves/#{gets.chomp}"
+    data = PStore.new(filename)
+    data.transaction do
+      data[:players] = @players
+      data[:board] = @board
+      data[:current_player] = @current_player
+      data[:check] = @check
+      data.commit
+    end
+    puts "Game saved.\n"
+  end
+
+  def load_game?
+    filename = filename_to_load
+    unless filename.upcase == "SAVES/BACK"
+      data = PStore.new(filename)
+      data.transaction do
+        @players = data[:players]
+        @board = data[:board]
+        @current_player = data[:current_player]
+        @check = data[:check]
+      end
+      true
+    else
+      false
+    end
+  end
+
+  def filename_to_load
+    while true
+      filename = "saves/"
+      print "\nFile to load: "
+      filename += gets.chomp
+      break if File.exist?(filename) || filename.upcase == "SAVES/BACK"
+      puts "File does not exist. Try again. (type 'back' to return to menu)"
+    end
+    filename
   end
 
   def stalemate?
@@ -63,6 +159,11 @@ class Chess
     while true
       piece, destination = get_move
       
+      if destination == "menu"
+        game_menu
+        next
+      end
+
       if piece.nil?
         puts "Illegal move. Try again\n"
         next
@@ -82,7 +183,7 @@ class Chess
   end
 
   def get_move
-    puts "What's your next move? (e.g. d2 d4)"
+    puts "What's your next move? (e.g. d2 d4, type 'menu' to open menu)"
     mv = gets.chomp.split
     start = mv.first
     piece = if mv.empty? || @board.space(start).nil?
@@ -104,5 +205,6 @@ class Chess
     else
       puts "Stalemate. Game over."
     end
+    gets
   end
 end

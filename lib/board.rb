@@ -2,15 +2,15 @@ class Board
   attr_accessor :position, :en_passant, :en_passant_destination
 
   def initialize(players)
-    @position = Hash.new { |h, k| h[k] = Array.new(9) }
+    @position = {}
     ("a".."h").each do |i|
-      @position[i]
+      @position[i] = Array.new(9)
+    end
 
     @players = players
 
     @en_passant = false
     @en_passant_destination = ""
-    end
   end
 
   def row(i)
@@ -38,7 +38,7 @@ class Board
   end
 
   def space(coords)
-    @position[coords[0]][coords[1].to_i]
+    @position[coords[0]][coords[1].to_i] unless coords == "menu"
   end
 
   private
