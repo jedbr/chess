@@ -16,10 +16,6 @@ class Piece
       end
 
     board.position[column][row] = piece
-    self.assign(piece, owner)
-  end
-
-  def self.assign(piece, owner)
     owner.pieces << piece
   end
 
@@ -32,17 +28,62 @@ class Piece
     @owner = owner
   end
 
+  def move(destination)
+    @board.en_passant = false
+    update_position(destination)
+  end
+
+  def checking?
+    moves(false).any? do |m| 
+      s = space(m)
+      s && s.type == "King" && s.color != @color
+    end
+  end
+
+  protected
+
+  def type
+    self.class.to_s.split("::").last
+  end
+
+  def destroy
+    @board.position[@column][@row] = nil
+    @owner.pieces.delete(self)
+  end
+
+  def restore
+    @board.position[@column][@row] = self
+    @owner.pieces << self
+  end
+
+  private
+
+  def update_position(destination)
+    space(destination).destroy unless space(destination).nil?
+    @board.position[@column][@row] = nil
+
+    @position = destination
+    @column = @position[0]
+    @row = @position[1].to_i
+
+    @board.position[@column][@row] = self
+  end
+
+  def space(coords)
+    @board.position[coords[0]][coords[1].to_i]
+  end
+
   def horizontal_moves
     moves1, moves2 = [], []
 
     ("a"...@column).to_a.reverse_each do |c|
-      moves1 << mv(c.ord - @column.ord, 0)
+      moves1 << translate_move(c.ord - @column.ord, 0)
     end
 
     moves1 = calculate_collision(moves1)
 
     ((@column.ord + 1).chr.."h").to_a.each do |c|
-      moves2 << mv(c.ord - @column.ord, 0)
+      moves2 << translate_move(c.ord - @column.ord, 0)
     end
 
     moves2 = calculate_collision(moves2)
@@ -54,13 +95,13 @@ class Piece
     moves1, moves2 = [], []
 
     (1...@row).to_a.reverse_each do |r|
-      moves1 << mv(0, r - @row)
+      moves1 << translate_move(0, r - @row)
     end
 
     moves1 = calculate_collision(moves1)
 
     (@row + 1..8).to_a.each do |r|
-      moves2 << mv(0, r - @row)
+      moves2 << translate_move(0, r - @row)
     end
 
     moves2 = calculate_collision(moves2)
@@ -76,7 +117,7 @@ class Piece
     y_shift = 1
 
     while column + x_shift <= 104 && @row + y_shift <= 8
-      moves1 << mv(x_shift, y_shift)
+      moves1 << translate_move(x_shift, y_shift)
       x_shift += 1
       y_shift += 1
     end
@@ -87,7 +128,7 @@ class Piece
     y_shift = -1
 
     while column + x_shift >= 97 && @row + y_shift >= 1
-      moves2 << mv(x_shift, y_shift)
+      moves2 << translate_move(x_shift, y_shift)
       x_shift -= 1
       y_shift -= 1
     end
@@ -105,7 +146,7 @@ class Piece
     y_shift = 1
 
     while column + x_shift >= 97 && @row + y_shift <= 8
-      moves1 << mv(x_shift, y_shift)
+      moves1 << translate_move(x_shift, y_shift)
       x_shift -= 1
       y_shift += 1
     end
@@ -116,7 +157,7 @@ class Piece
     y_shift = -1
 
     while column + x_shift <= 104 && @row + y_shift >= 1
-      moves2 << mv(x_shift, y_shift)
+      moves2 << translate_move(x_shift, y_shift)
       x_shift += 1
       y_shift -= 1
     end
@@ -126,7 +167,7 @@ class Piece
     moves1 + moves2
   end
 
-  def mv(column, row)
+  def translate_move(column, row)
     new_position = ""
 
     new_column = @column.ord + column
@@ -161,47 +202,6 @@ class Piece
     end
 
     available_moves
-  end
-
-  def move(destination)
-    @board.en_passant = false
-    update_position(destination)
-  end
-
-  def checking?
-    moves(false).any? do |m| 
-      s = space(m)
-      s && s.type == "King" && s.color != @color
-    end
-  end
-
-  def type
-    self.class.to_s.split("::").last
-  end
-
-  def space(coords)
-    @board.position[coords[0]][coords[1].to_i]
-  end
-
-  def update_position(destination)
-    space(destination).destroy unless space(destination).nil?
-    @board.position[@column][@row] = nil
-
-    @position = destination
-    @column = @position[0]
-    @row = @position[1].to_i
-
-    @board.position[@column][@row] = self
-  end
-
-  def destroy
-    @board.position[@column][@row] = nil
-    @owner.pieces.delete(self)
-  end
-
-  def restore
-    @board.position[@column][@row] = self
-    @owner.pieces << self
   end
 
   def remove_self_checking(moves_to_filter)

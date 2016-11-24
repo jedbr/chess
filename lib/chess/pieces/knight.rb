@@ -7,20 +7,22 @@ module Pieces
 
     def moves(self_checking = true)
       moves = []
-      moves.push(mv(2, 1),
-                 mv(1, 2),
-                 mv(2, -1),
-                 mv(1, -2),
-                 mv(-1, 2),
-                 mv(-2, 1),
-                 mv(-1, -2),
-                 mv(-2, -1))
+      moves.push(translate_move(2, 1),
+                 translate_move(1, 2),
+                 translate_move(2, -1),
+                 translate_move(1, -2),
+                 translate_move(-1, 2),
+                 translate_move(-2, 1),
+                 translate_move(-1, -2),
+                 translate_move(-2, -1))
       
       moves.compact!
       moves = calculate_collision(moves)
       moves = remove_self_checking(moves) if self_checking
       moves
     end
+
+    private
 
     def calculate_collision(moves)
       available_moves = []

@@ -13,10 +13,9 @@ class Board
     @en_passant_destination = ""
   end
 
-  def row(i)
-    row = []
-    @position.each_value { |v| row << v[i] }
-    row
+  def setup
+    setup_pawns
+    setup_figures
   end
 
   def print
@@ -32,9 +31,10 @@ class Board
     puts "    A    B    C    D    E    F    G    H  \n"
   end
 
-  def setup
-    setup_pawns
-    setup_figures
+  def row(i)
+    row = []
+    @position.each_value { |v| row << v[i] }
+    row
   end
 
   def space(coords)

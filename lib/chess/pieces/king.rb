@@ -9,14 +9,14 @@ module Pieces
 
     def moves(self_checking = true, castling = true)
       moves = []
-      moves.push(mv(0, 1),
-                 mv(1, 1),
-                 mv(1, 0),
-                 mv(1, -1),
-                 mv(0, -1),
-                 mv(-1, -1),
-                 mv(-1, 0),
-                 mv(-1, 1))
+      moves.push(translate_move(0, 1),
+                 translate_move(1, 1),
+                 translate_move(1, 0),
+                 translate_move(1, -1),
+                 translate_move(0, -1),
+                 translate_move(-1, -1),
+                 translate_move(-1, 0),
+                 translate_move(-1, 1))
 
       moves.compact!
       moves = calculate_collision(moves)
@@ -24,6 +24,29 @@ module Pieces
       moves = remove_self_checking(moves) if self_checking
       moves
     end
+
+    def move(destination)
+      if destination == translate_move(-2, 0)
+        @castling_rooks.find { |r| r.column == "a"}.move(translate_move(-1, 0))
+      elsif destination == translate_move(2, 0)
+        @castling_rooks.find { |r| r.column == "h"}.move(translate_move(1, 0))
+      end
+      super(destination)
+      @moved = true
+    end
+
+    def checked?
+      @owner.opponent.pieces.any? { |p| p.checking? }
+    end
+
+    def checking?
+      moves(false, false).any? do |m| 
+        s = space(m)
+        s && s.type == "King" && s.color != @color
+      end
+    end
+
+    private
 
     def calculate_collision(moves)
       available_moves = []
@@ -41,17 +64,6 @@ module Pieces
       available_moves
     end
 
-    def checked?
-      @owner.opponent.pieces.any? { |p| p.checking? }
-    end
-
-    def checking?
-      moves(false, false).any? do |m| 
-        s = space(m)
-        s && s.type == "King" && s.color != @color
-      end
-    end
-#=begin
     def castling(moves)
       @castling_rooks = []
 
@@ -61,7 +73,7 @@ module Pieces
           unless r.moved
             if r.column < @column
               if ("b"...@column).all? { |c| @board.position[c][@row].nil? }
-                moves = add_castling(moves, mv(-1, 0), r)
+                moves = add_castling(moves, translate_move(-1, 0), r)
               end
             else
               empty_row = ((@column.ord + 1).chr.."g").all? do |c| 
@@ -69,7 +81,7 @@ module Pieces
               end
 
               if empty_row
-                moves = add_castling(moves, mv(1, 0), r)
+                moves = add_castling(moves, translate_move(1, 0), r)
               end
             end
           end
@@ -86,25 +98,14 @@ module Pieces
 
       unless space_checked
         if rook.column == "a"
-          moves << mv(-2, 0)
+          moves << translate_move(-2, 0)
         else
-          moves << mv(2, 0)
+          moves << translate_move(2, 0)
         end
         @castling_rooks << rook
       end
 
       moves
     end
-
-    def move(destination)
-      if destination == mv(-2, 0)
-        @castling_rooks.find { |r| r.column == "a"}.move(mv(-1, 0))
-      elsif destination == mv(2, 0)
-        @castling_rooks.find { |r| r.column == "h"}.move(mv(1, 0))
-      end
-      super(destination)
-      @moved = true
-    end
-#=end
   end
 end

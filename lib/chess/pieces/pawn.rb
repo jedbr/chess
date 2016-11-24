@@ -10,13 +10,13 @@ module Pieces
       moves = []
 
       if @color == :white
-        moves.push(mv(0, 1),
-                   mv(-1, 1),
-                   mv(1, 1))
+        moves.push(translate_move(0, 1),
+                   translate_move(-1, 1),
+                   translate_move(1, 1))
       else
-        moves.push(mv(0, -1),
-                   mv(-1, -1),
-                   mv(1, -1))
+        moves.push(translate_move(0, -1),
+                   translate_move(-1, -1),
+                   translate_move(1, -1))
       end
 
       moves.compact!
@@ -25,41 +25,15 @@ module Pieces
       moves
     end
 
-    def calculate_collision(moves)
-      available_moves = []
-
-      moves.each_with_index do |m, i|
-        space = space(m)
-
-        if i == 0
-          if space.nil?
-            available_moves << m
-
-            if @moved == false
-              first_move = @color == :white ? mv(0, 2) : mv(0, -2)
-              available_moves << first_move if space(first_move).nil?
-            end
-          end
-        elsif @board.en_passant && m == @board.en_passant_destination
-          available_moves << m
-        else
-          available_moves << m unless space.nil? ||
-                                      space.color == @color 
-        end
-      end
-
-      available_moves
-    end
-
     def move(destination)
 
       if @moved == false
-        if destination == mv(0, 2)
+        if destination == translate_move(0, 2)
           @board.en_passant = true
-          @board.en_passant_destination = mv(0, 1)
-        elsif destination == mv(0, -2)
+          @board.en_passant_destination = translate_move(0, 1)
+        elsif destination == translate_move(0, -2)
           @board.en_passant = true
-          @board.en_passant_destination = mv(0, -1)
+          @board.en_passant_destination = translate_move(0, -1)
         else
           @board.en_passant = false
         end
@@ -70,7 +44,11 @@ module Pieces
             destination == @board.en_passant_destination
 
         update_position(destination)
-        @color == :white ? space(mv(0, -1)).destroy : space(mv(0, 1)).destroy
+        if @color == :white
+          space(translate_move(0, -1)).destroy
+        else
+          space(translate_move(0, 1)).destroy
+        end
         @board.en_passant = false
       else
         @board.en_passant = false
@@ -85,12 +63,48 @@ module Pieces
     end
 
     def checking?
-      not_checking = [mv(0, 2), mv(0, 1), mv(0, -2), mv(0, -1)]
+      not_checking = [translate_move(0, 2),
+                      translate_move(0, 1),
+                      translate_move(0, -2),
+                      translate_move(0, -1)]
       
       (moves(false) - not_checking).any? do |m| 
         s = space(m)
         true if s && s.type == "King" && s.color != @color
       end
+    end
+
+    private
+
+    def calculate_collision(moves)
+      available_moves = []
+
+      moves.each_with_index do |m, i|
+        space = space(m)
+
+        if i == 0
+          if space.nil?
+            available_moves << m
+
+            if @moved == false
+              first_move = if @color == :white
+                             translate_move(0, 2)
+                           else
+                             translate_move(0, -2)
+                           end
+                           
+              available_moves << first_move if space(first_move).nil?
+            end
+          end
+        elsif @board.en_passant && m == @board.en_passant_destination
+          available_moves << m
+        else
+          available_moves << m unless space.nil? ||
+                                      space.color == @color 
+        end
+      end
+
+      available_moves
     end
 
     def promote
