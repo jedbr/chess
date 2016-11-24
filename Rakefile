@@ -1,9 +1,5 @@
-begin
-  require 'rspec/core/rake_task'
+task :default => :play
 
-  RSpec::Core::RakeTask.new(:spec)
-
-  task :default => :spec
-rescue LoadError
-  # no rspec available
+task :play do
+  ruby "-w lib/chess.rb"
 end
