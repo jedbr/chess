@@ -70,7 +70,7 @@ module Pieces
       
       (moves(false) - not_checking).any? do |m| 
         s = space(m)
-        true if s && s.type == "King" && s.color != @color
+        s && s.type == "King" && s.color != @color
       end
     end
 
