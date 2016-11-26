@@ -42,6 +42,10 @@ class Board
                                                 !coords[0].between?("a", "h")
   end
 
+  def assign_to(coords, value)
+    @position[coords[0]][coords[1].to_i] = value
+  end
+
   private
 
   def setup_pawns
