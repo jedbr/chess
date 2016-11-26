@@ -2,9 +2,6 @@ class Piece
   attr_accessor :symbol, :color, :position
 
   def self.create(color, type, position, board, owner)
-    column = position[0]
-    row = position[1].to_i
-
     piece = 
       case type
       when :pawn then Pieces::Pawn.new(color, position, board, owner)
@@ -15,7 +12,7 @@ class Piece
       when :knight then Pieces::Knight.new(color, position, board, owner)
       end
 
-    board.position[column][row] = piece
+    board.assign_to(position, piece)
     owner.pieces << piece
   end
 
@@ -47,12 +44,12 @@ class Piece
   end
 
   def destroy
-    @board.position[@column][@row] = nil
+    @board.assign_to(@position, nil)
     @owner.pieces.delete(self)
   end
 
   def restore
-    @board.position[@column][@row] = self
+    @board.assign_to(@position, self)
     @owner.pieces << self
   end
 
@@ -60,13 +57,13 @@ class Piece
 
   def update_position(destination)
     space(destination).destroy unless space(destination).nil?
-    @board.position[@column][@row] = nil
+    @board.assign_to(@position, nil)
 
     @position = destination
     @column = @position[0]
     @row = @position[1].to_i
 
-    @board.position[@column][@row] = self
+    @board.assign_to(@position, self)
   end
 
   def space(coords)
@@ -210,13 +207,13 @@ class Piece
     moves_to_filter.each do |m|
       backup = space(m)
       space(m).destroy unless backup.nil?
-      @board.position[m[0]][m[1].to_i] = self
-      @board.position[@column][@row] = nil
+      @board.assign_to(m, self)
+      @board.assign_to(@position, nil)
 
       safe_moves << m unless @owner.opponent.pieces.any? { |p| p.checking? }
 
-      backup.nil? ? @board.position[m[0]][m[1].to_i] = nil : backup.restore
-      @board.position[@column][@row] = self
+      backup.nil? ? @board.assign_to(m, nil) : backup.restore
+      @board.assign_to(@position, self)
     end
 
     safe_moves

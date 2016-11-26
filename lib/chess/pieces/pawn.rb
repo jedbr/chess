@@ -114,8 +114,8 @@ module Pieces
         case type
         when :queen, :rook, :bishop, :knight
           self.destroy
-          @board.position[@column][@row] = 
-            Piece.create(@color, type, @position, @board, @owner)
+          @board.assign_to(@position,
+            Piece.create(@color, type, @position, @board, @owner))
           break
         else
           puts "Invalid input. Try again."
